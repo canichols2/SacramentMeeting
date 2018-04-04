@@ -26,6 +26,12 @@
     margin: 15px;
 }
 
+address {
+    padding-top: .5%;
+    
+
+}
+
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
     /* Hide captions */
