@@ -1,0 +1,64 @@
+﻿@model SacramentMeeting.Models.Sacrament
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h2>Edit</h2>
+
+<h4>Sacrament</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="date" class="control-label"></label>
+                <input asp-for="date" class="form-control" />
+                <span asp-validation-for="date" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OpeningSong" class="control-label"></label>
+                <input asp-for="OpeningSong" class="form-control" />
+                <span asp-validation-for="OpeningSong" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SacramentSong" class="control-label"></label>
+                <input asp-for="SacramentSong" class="form-control" />
+                <span asp-validation-for="SacramentSong" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IntermediateSong" class="control-label"></label>
+                <input asp-for="IntermediateSong" class="form-control" />
+                <span asp-validation-for="IntermediateSong" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ClosingSong" class="control-label"></label>
+                <input asp-for="ClosingSong" class="form-control" />
+                <span asp-validation-for="ClosingSong" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="selectedSpeakers" class="control-label">Selected Speakers:</label>
+                @* This will eventually become a for-each but for now we'll leave it as is, static 5 boxes.*@
+                <input class=" form-control" type="text" name="selectedSpeakers" value="CodyNichols" />  <br />
+                <input class=" form-control" type="text" name="selectedSpeakers" value="Holly" /> <br />
+                <input class=" form-control" type="text" name="selectedSpeakers" value="Lauren" /> <br />
+                <input class=" form-control" type="text" name="selectedSpeakers" value="Another" />  <br />
+                <input class=" form-control" type="text" name="selectedSpeakers" value="CodyNichols2" />  <br />
+
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
