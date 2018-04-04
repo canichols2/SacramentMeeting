@@ -21,7 +21,7 @@ namespace SacramentMeeting.Controllers
         // GET: Sacraments
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Sacrament.ToListAsync());
+            return View(await _context.Sacrament.Include(i=>i.Speakers).ThenInclude(s=>s.Member).ToListAsync());
         }
 
         // GET: Sacraments/Details/5
@@ -33,7 +33,10 @@ namespace SacramentMeeting.Controllers
             }
 
             var sacrament = await _context.Sacrament
-                .SingleOrDefaultAsync(m => m.Id == id);
+                .Include(m => m.Speakers)
+                    .ThenInclude(s => s.Member)
+                .SingleOrDefaultAsync(m => m.Id == id)
+                ;
             if (sacrament == null)
             {
                 return NotFound();
@@ -45,7 +48,8 @@ namespace SacramentMeeting.Controllers
         // GET: Sacraments/Create
         public IActionResult Create()
         {
-            return View();
+            var sac = new Sacrament {Speakers = new List<Speakers>() ,date = DateTime.Now};
+            return View(sac);
         }
 
         // POST: Sacraments/Create
@@ -53,14 +57,17 @@ namespace SacramentMeeting.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,date,OpeningSong,SacramentSong,IntermediateSong,ClosingSong")] Sacrament sacrament)
+        public async Task<IActionResult> Create([Bind("Id,date,OpeningSong,SacramentSong,IntermediateSong,ClosingSong")] Sacrament sacrament, string[] selectedSpeakers)
         {
+            _context.Add(sacrament);
+            UpdateSpeakers(sacrament, selectedSpeakers);
             if (ModelState.IsValid)
             {
-                _context.Add(sacrament);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            if(sacrament.Speakers == null)
+                sacrament.Speakers = new List<Speakers>();
             return View(sacrament);
         }
 
@@ -139,12 +146,12 @@ namespace SacramentMeeting.Controllers
                 if(speaker.Contains(","))
                 {
                     var splitName = speaker.Split(",");
-                    firstName = splitName[1];
-                    lastName = splitName[0];
+                    firstName = splitName[1].Trim();
+                    lastName = splitName[0].Trim();
                 }
                 else
                 {
-                    firstName = speaker;
+                    firstName = speaker.Trim();
                     // Was going to be for first *SPACE* last,
                     // // but since you can have spaces in the FirstMiddleName, 
                     // // it wasn't going to work
@@ -194,7 +201,7 @@ namespace SacramentMeeting.Controllers
             foreach (var member in selectedSpeakersList)
             {
                 if(!sacrament.Speakers.Any(s=>s.Member == member))
-                    sacrament.Speakers.Add(new Speakers { SacramentID = sacrament.Id, MemberID = member.Id });
+                    sacrament.Speakers.Add(new Speakers { SacramentID = sacrament.Id, MemberID = member.Id, Member = member });
             }
             //_context.SaveChanges();
         }

@@ -1,18 +1,60 @@
-﻿@page
-@using SacramentMeeting.Models
+﻿@using SacramentMeeting.Models
 @model ICollection<Speakers>
 @{
 
 
 }
-
-<div class="form-group">
-    <label for="selectedSpeakers" class="control-label">Selected Speakers:</label>
-    @* This will eventually become a for-each but for now we'll leave it as is, static 5 boxes.*@
-
-    @foreach (var item in Model)
-    {
-        <input class=" form-control" type="text" name="selectedSpeakers" value="@item.Member.FullName" /> <br />
+<style>
+        .Speakers > div{
+            position:relative;
+        }
+        .Speakers .input-group {
+            margin-bottom: 5px;
+        }
+    </style>
+<script>
+    function deleteElement(element) {
+        element.parentElement.removeChild(element)
     }
-    <input class=" form-control" type="text" name="selectedSpeakers" value="" /> <br /> 
+    function removeSpeakerControl(e) {
+        deleteElement(e.parentElement.parentElement)
+    }
+    function addSpeakerControl(e) {
+        var html = '<div class="input-group"><span class="input-group-btn"><button type="button"  class="closeBtn btn btn-defaul" onclick="removeSpeakerControl(this)">x</button></span><input class="form-control" type="text" name="selectedSpeakers" value="" /></div>'
+        e.parentElement.innerHTML += html;
+    }
+    function addSpeakerControl(e) {
+        var div = document.createElement("div")
+        //window.alert("I'm Here.")
+        div.classList.add(["input-group"]);
+        var html = '<span class="input-group-btn"><button type="button"  class="closeBtn btn btn-danger" onclick="removeSpeakerControl(this)">x</button></span><input class="form-control" type="text" name="selectedSpeakers" value="" />'
+        div.innerHTML = html;
+        e.parentElement.appendChild(div);
+
+    }
+</script>
+
+<div class="Speakers">
+    <label for="selectedSpeakers" class="control-label">Selected Speakers:</label>
+    <button class="btn btn-success pull-right" type="button" onclick="addSpeakerControl(this)">+</button><br /><br />
+    @* This will eventually become a for-each but for now we'll leave it as is, static 5 boxes.*@
+    @if (Model.Any())
+    {
+        @foreach (var item in Model)
+        {
+            <div class="input-group">
+                <span class="input-group-btn">
+                    <button type="button" class="closeBtn btn btn-danger" onclick="removeSpeakerControl(this)">x</button>
+                </span>
+                <input class="form-control" type="text" name="selectedSpeakers" value="@item.Member.FullName" />
+            </div>
+        }
+    }
+    <div class="input-group">
+        <span class="input-group-btn">
+            <button type="button" class="closeBtn btn btn-danger" onclick="removeSpeakerControl(this)">x</button>
+        </span>
+        <input class="form-control" type="text" name="selectedSpeakers" value="" />
+    </div>
 </div>
+<br /><br />

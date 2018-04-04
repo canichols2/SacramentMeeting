@@ -40,6 +40,11 @@
         <dd>
             @Html.DisplayFor(model => model.ClosingSong)
         </dd>
+        @foreach(var speaker in Model.Speakers)
+        {
+        <dt>Speaker</dt>
+        <dd>@speaker.Member.FullName</dd>
+        }
     </dl>
 </div>
 <div>

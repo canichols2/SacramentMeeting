@@ -1,4 +1,7 @@
-﻿@model SacramentMeeting.Models.Sacrament
+﻿@using Microsoft.AspNetCore.Mvc.ViewFeatures
+@using SacramentMeeting
+
+@model SacramentMeeting.Models.Sacrament
 
 @{
     ViewData["Title"] = "Edit";
@@ -38,18 +41,22 @@
                 <input asp-for="ClosingSong" class="form-control" />
                 <span asp-validation-for="ClosingSong" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label for="selectedSpeakers" class="control-label">Selected Speakers:</label>
-                @* This will eventually become a for-each but for now we'll leave it as is, static 5 boxes.*@
 
-                @foreach (var item in Model.Speakers)
-                { 
+
+
+            @await Html.PartialAsync("SpeakersList", Model.Speakers)
+
+            @*<div class="form-group">*@
+            @*<label for="selectedSpeakers" class="control-label">Selected Speakers:</label>*@
+            @* This will eventually become a for-each but for now we'll leave it as is, static 5 boxes.*@
+            @*@foreach (var item in Model.Speakers)
+                {
                     <input class=" form-control" type="text" name="selectedSpeakers" value="@item.Member.FullName" /> <br />
                 }
-                 <input class=" form-control" type="text" name="selectedSpeakers" value="" /> <br />
+                <input class=" form-control" type="text" name="selectedSpeakers" value="" /> <br />
+                </div>*@
 
 
-            </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
