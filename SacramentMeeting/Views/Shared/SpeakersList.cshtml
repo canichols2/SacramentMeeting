@@ -1,0 +1,18 @@
+﻿@page
+@using SacramentMeeting.Models
+@model ICollection<Speakers>
+@{
+
+
+}
+
+<div class="form-group">
+    <label for="selectedSpeakers" class="control-label">Selected Speakers:</label>
+    @* This will eventually become a for-each but for now we'll leave it as is, static 5 boxes.*@
+
+    @foreach (var item in Model)
+    {
+        <input class=" form-control" type="text" name="selectedSpeakers" value="@item.Member.FullName" /> <br />
+    }
+    <input class=" form-control" type="text" name="selectedSpeakers" value="" /> <br /> 
+</div>

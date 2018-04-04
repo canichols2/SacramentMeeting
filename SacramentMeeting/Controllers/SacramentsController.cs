@@ -98,6 +98,8 @@ namespace SacramentMeeting.Controllers
 
             if (ModelState.IsValid)
             {
+                _context.Attach(sacrament);
+                ;
                 UpdateSpeakers(sacrament, selectedSpeakers);
                 try
                 {
@@ -125,7 +127,7 @@ namespace SacramentMeeting.Controllers
 
             ICollection<Member> selectedSpeakersList = new List<Member>();
             ICollection<Speakers> allSpeakers = _context.Speakers
-                .Include(s=>s.Sacrament).Include(s=>s.Member).ToList();
+                .Include(s=>s.Member).ToList();
         
             //_context.Member.find
             if(selectedSpeakers[0] != null)
@@ -183,7 +185,7 @@ namespace SacramentMeeting.Controllers
             {
                 if (!selectedSpeakersList.Contains(aSpeak.Member) && aSpeak.Sacrament == sacrament)
                 {
-                    _context.Remove(aSpeak);
+                    sacrament.Speakers.Remove(aSpeak);
                 }
             }
             if (sacrament.Speakers == null)
@@ -194,7 +196,7 @@ namespace SacramentMeeting.Controllers
                 if(!sacrament.Speakers.Any(s=>s.Member == member))
                     sacrament.Speakers.Add(new Speakers { SacramentID = sacrament.Id, MemberID = member.Id });
             }
-            _context.SaveChanges();
+            //_context.SaveChanges();
         }
 
         // GET: Sacraments/Delete/5
