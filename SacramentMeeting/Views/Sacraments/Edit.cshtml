@@ -41,11 +41,12 @@
             <div class="form-group">
                 <label for="selectedSpeakers" class="control-label">Selected Speakers:</label>
                 @* This will eventually become a for-each but for now we'll leave it as is, static 5 boxes.*@
-                <input class=" form-control" type="text" name="selectedSpeakers" value="CodyNichols" />  <br />
-                <input class=" form-control" type="text" name="selectedSpeakers" value="Holly" /> <br />
-                <input class=" form-control" type="text" name="selectedSpeakers" value="Lauren" /> <br />
-                <input class=" form-control" type="text" name="selectedSpeakers" value="Another" />  <br />
-                <input class=" form-control" type="text" name="selectedSpeakers" value="CodyNichols2" />  <br />
+
+                @foreach (var item in Model.Speakers)
+                { 
+                    <input class=" form-control" type="text" name="selectedSpeakers" value="@item.Member.FullName" /> <br />
+                }
+
 
             </div>
             <div class="form-group">

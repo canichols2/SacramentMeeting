@@ -72,7 +72,11 @@ namespace SacramentMeeting.Controllers
                 return NotFound();
             }
 
-            var sacrament = await _context.Sacrament.SingleOrDefaultAsync(m => m.Id == id);
+            var sacrament = await _context.Sacrament
+                .Include(m=>m.Speakers)
+                    .ThenInclude(s=>s.Member)
+                .SingleOrDefaultAsync(m => m.Id == id)
+                ;
             if (sacrament == null)
             {
                 return NotFound();
@@ -92,30 +96,9 @@ namespace SacramentMeeting.Controllers
                 return NotFound();
             }
 
-            ICollection<Member> selectedSpeakersList = new List<Member>();
-                //_context.Member.find
-            foreach(string speaker in selectedSpeakers)
-            {
-                if(_context.Member.Any(m => m.FirstMiddleName == speaker))
-                {
-                    selectedSpeakersList.Add(_context.Member.SingleOrDefault(m => m.FirstMiddleName == speaker));
-                }
-                else
-                {
-                    //Create Entity and add it to speakerList....
-                    var member = new Member();
-                    member.FirstMiddleName = "";
-                    member.LastName = "";
-                    member.BaptizeDate = DateTime.Now;
-                    _context.Add(member);
-                    selectedSpeakersList.Add(member);
-                }
-            }
-            await _context.SaveChangesAsync();
-
             if (ModelState.IsValid)
             {
-                UpdateSpeakers(sacrament, selectedSpeakersList);
+                UpdateSpeakers(sacrament, selectedSpeakers);
                 try
                 {
                     _context.Update(sacrament);
@@ -137,16 +120,64 @@ namespace SacramentMeeting.Controllers
             return View(sacrament);
         }
 
-        private void UpdateSpeakers(Sacrament sacrament, ICollection<Member> selectedSpeakersList)
+        private void UpdateSpeakers(Sacrament sacrament, String[] selectedSpeakers)
         {
-            //if (sacrament.Speakers == null)
-            //    sacrament.Speakers = new List<Speakers>();
-            //foreach(var speaker in sacrament.Speakers)
-            //{
-            //    sacrament.Speakers.Remove(speaker);
-            //}
-            sacrament.Speakers.Clear();
-            foreach(var member in selectedSpeakersList)
+
+            ICollection<Member> selectedSpeakersList = new List<Member>();
+            //_context.Member.find
+            foreach (string speaker in selectedSpeakers)
+            {
+                var firstName = "";
+                var lastName = "";
+                if(speaker.Contains(","))
+                {
+                    var splitName = speaker.Split(",");
+                    firstName = splitName[1];
+                    lastName = splitName[0];
+                }
+                else
+                {
+                    firstName = speaker;
+                    // Was going to be for first *SPACE* last,
+                    // // but since you can have spaces in the FirstMiddleName, 
+                    // // it wasn't going to work
+                    //var splitName = speaker.Split(" ");
+                    //firstName = splitName[0];
+                    //if(splitName.Length > 1)
+                    //    lastName = splitName[splitName.Length-1];
+                }
+
+
+
+
+
+                if (_context.Member.Any(m => m.FirstMiddleName == firstName && m.LastName == lastName))
+                {
+                    Member mem = _context.Member.SingleOrDefault(m => m.FirstMiddleName == firstName && m.LastName == lastName);
+
+                    selectedSpeakersList.Add(mem);
+                }
+                else
+                {
+                    //Create Entity and add it to speakerList....
+                    var member = new Member();
+                    member.FirstMiddleName = firstName;
+                    member.LastName = lastName;
+                    member.BaptizeDate = DateTime.Now;
+                    _context.Add(member);
+                    selectedSpeakersList.Add(member);
+                }
+            }
+            _context.SaveChanges();
+
+            if (sacrament.Speakers == null)
+                sacrament.Speakers = new List<Speakers>();
+            foreach (var speaker in sacrament.Speakers)
+            {
+                sacrament.Speakers.Remove(speaker);
+            }
+            //sacrament.Speakers.Clear();
+            foreach (var member in selectedSpeakersList)
             {
                 sacrament.Speakers.Add(new Speakers { SacramentID = sacrament.Id, MemberID = member.Id });
             }

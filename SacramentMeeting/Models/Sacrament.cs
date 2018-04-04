@@ -58,11 +58,19 @@ namespace SacramentMeeting.Models
         public int Id { get; set; }
         public String FirstMiddleName { get; set; }
         public String LastName { get; set; }
-
         [DataType(DataType.Date)]
         public DateTime BaptizeDate { get; set; }
 
         public virtual ICollection<MemberCalling> MemberCalling { get; set; }
+        public String FullName
+        {
+            get
+            {
+                if(LastName != "")
+                    return LastName + ", " + FirstMiddleName;
+                return FirstMiddleName;
+            }
+        }
     }
     public class MemberCalling
     {
