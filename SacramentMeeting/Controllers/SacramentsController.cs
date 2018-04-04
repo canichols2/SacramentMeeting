@@ -124,11 +124,16 @@ namespace SacramentMeeting.Controllers
         {
 
             ICollection<Member> selectedSpeakersList = new List<Member>();
+            ICollection<Speakers> allSpeakers = _context.Speakers
+                .Include(s=>s.Sacrament).Include(s=>s.Member).ToList();
+        
             //_context.Member.find
+            if(selectedSpeakers[0] != null)
             foreach (string speaker in selectedSpeakers)
             {
                 var firstName = "";
                 var lastName = "";
+                    if (speaker != null) //continue;
                 if(speaker.Contains(","))
                 {
                     var splitName = speaker.Split(",");
@@ -146,10 +151,13 @@ namespace SacramentMeeting.Controllers
                     //if(splitName.Length > 1)
                     //    lastName = splitName[splitName.Length-1];
                 }
+                
 
 
-
-
+                if(firstName == "")
+                {
+                    continue;
+                }
 
                 if (_context.Member.Any(m => m.FirstMiddleName == firstName && m.LastName == lastName))
                 {
@@ -170,17 +178,23 @@ namespace SacramentMeeting.Controllers
             }
             _context.SaveChanges();
 
+            //Remove old speaker references.
+            foreach (var aSpeak in allSpeakers)
+            {
+                if (!selectedSpeakersList.Contains(aSpeak.Member) && aSpeak.Sacrament == sacrament)
+                {
+                    _context.Remove(aSpeak);
+                }
+            }
             if (sacrament.Speakers == null)
                 sacrament.Speakers = new List<Speakers>();
-            foreach (var speaker in sacrament.Speakers)
-            {
-                sacrament.Speakers.Remove(speaker);
-            }
-            //sacrament.Speakers.Clear();
+            //Add new speaker references (If Not Exist)
             foreach (var member in selectedSpeakersList)
             {
-                sacrament.Speakers.Add(new Speakers { SacramentID = sacrament.Id, MemberID = member.Id });
+                if(!sacrament.Speakers.Any(s=>s.Member == member))
+                    sacrament.Speakers.Add(new Speakers { SacramentID = sacrament.Id, MemberID = member.Id });
             }
+            _context.SaveChanges();
         }
 
         // GET: Sacraments/Delete/5
