@@ -16,16 +16,13 @@
                     @Html.DisplayNameFor(model => model.date)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.OpeningSong)
+                    Songs
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.SacramentSong)
+                    Speakers
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.IntermediateSong)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ClosingSong)
+                    Presiding
                 </th>
             <th></th>
         </tr>
@@ -37,16 +34,29 @@
                 @Html.DisplayFor(modelItem => item.date)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.OpeningSong)
+                <dl class="dl-horizontal">
+                    <dt>Opening</dt>
+                    <dd>@Html.DisplayFor(modelItem => item.OpeningSong)</dd>
+                    <dt>Sacrement</dt>
+                    <dd>@Html.DisplayFor(modelItem => item.SacramentSong)</dd>
+                    @if (item.IntermediateSong != null && item.IntermediateSong != 0)
+                    {<dt>Intermediate</dt><dd>@Html.DisplayFor(modelItem => item.IntermediateSong)</dd>}
+                    <dt>Closing</dt><dd>@Html.DisplayFor(modelItem => item.ClosingSong)</dd>
+                </dl>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.SacramentSong)
+                <ul>
+                @foreach(var speaker in item.Speakers)
+                {
+                    <li>@speaker.Member.FullName</li>
+                }
+                </ul>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IntermediateSong)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ClosingSong)
+                <dl class="dl-horizontal">
+                    <dt>Presiding:  </dt><dd>TBD</dd> 
+                    <dt>Conducting: </dt> <dd>TBD</dd>
+                </dl>
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
