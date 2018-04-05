@@ -11,9 +11,10 @@ using System;
 namespace SacramentMeeting.Migrations
 {
     [DbContext(typeof(SacramentContext))]
-    partial class SacramentContextModelSnapshot : ModelSnapshot
+    [Migration("20180404074158_Update 1")]
+    partial class Update1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

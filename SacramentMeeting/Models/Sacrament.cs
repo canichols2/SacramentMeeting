@@ -10,40 +10,38 @@ namespace SacramentMeeting.Models
     {
         public int Id { get; set; }
 
+        public int? PresidingId { get; set; }
+        public int? ConductingId { get; set; }
+
+
         [Required]
         [DataType(DataType.Date)]
         public DateTime date { get; set; }
 
         [Required]
+        [Range(0, 341)]
         public int OpeningSong { get; set; }
 
         [Required]
+        [Range(0, 341)]
         public int SacramentSong { get; set; }
 
-        public int IntermediateSong { get; set; }
+        [Range(0, 341)]
+        public int? IntermediateSong { get; set; }
 
         [Required]
+        [Range(0, 341)]
         public int ClosingSong { get; set; }
-        
 
 
+        public Member Presiding { get; set; }
+        public Member Conducting { get; set; }
         public virtual ICollection<Speakers> Speakers { get; set; }
     }
 
 
     public class Speakers
     {
-        //public Speakers(int SacramentID, int MemberID)
-        //{
-        //    this.SacramentID = SacramentID;
-        //    this.MemberID = MemberID;
-        //}
-        //public Speakers(Sacrament SacramentID, Member MemberID)
-        //{
-        //    this.Sacrament = SacramentID;
-        //    this.Member = MemberID;
-        //}
-
         public int Id { get; set; }
         public int SacramentID { get; set; }
         public int MemberID { get; set; }
@@ -58,6 +56,7 @@ namespace SacramentMeeting.Models
         public int Id { get; set; }
         public String FirstMiddleName { get; set; }
         public String LastName { get; set; }
+
         [DataType(DataType.Date)]
         public DateTime BaptizeDate { get; set; }
 
@@ -76,7 +75,7 @@ namespace SacramentMeeting.Models
     {
         public int Id { get; set; }
         public int MemberId { get; set; }
-        public int CallingId { get; set; }
+        public int? CallingId { get; set; }
         public bool Active { get; set; }
 
         public virtual Member Member { get; set; }

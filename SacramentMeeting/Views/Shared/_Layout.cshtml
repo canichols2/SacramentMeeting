@@ -33,6 +33,15 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-area="" asp-controller="Sacraments" asp-action="index">Sacraments</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact Us</a></li>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Admin</a>
+                        @*<span class="caret"></span>*@
+                        <ul class="dropdown-menu">
+                            <li><a asp-area="" asp-controller="MemberCallings" asp-action="Index">Member Callings</a></li>
+                            <li><a asp-area="" asp-controller="Home" asp-action="Index">etc</a></li>
+                            <li><a asp-area="" asp-controller="Home" asp-action="Index">etc</a></li>
+                        </ul>
+                    </li>
 
                 </ul>
             </div>
