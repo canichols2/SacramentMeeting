@@ -48,12 +48,17 @@ namespace SacramentMeeting.Controllers
         // GET: Sacraments/Create
         public IActionResult Create()
         {
-            var sac = new Sacrament {Speakers = new List<Speakers>() ,date = DateTime.Now};
+            var sac = new Sacrament { Speakers = new List<Speakers>(), date = DateTime.Now };
+            GetMembersForDropdown();
+            //ViewData["Callings"] = new SelectList(_context.MemberCalling.Where(c=>c.Active==true).Include(c=>c.Member), "Id", "Member.FullName");
+            return View(sac);
+        }
+
+        private void GetMembersForDropdown()
+        {
             ViewData["Members"] = new SelectList(_context.Member, "Id", "FullName");
             ViewData["Topics"] = new SelectList(_context.SpeakerTopic, "Id", "Topic");
             ViewData["Callings"] = new SelectList(_context.Calling, "Id", "CallingName");
-            //ViewData["Callings"] = new SelectList(_context.MemberCalling.Where(c=>c.Active==true).Include(c=>c.Member), "Id", "Member.FullName");
-            return View(sac);
         }
 
         // POST: Sacraments/Create
@@ -61,10 +66,13 @@ namespace SacramentMeeting.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,date,OpeningSong,SacramentSong,IntermediateSong,ClosingSong")] Sacrament sacrament, string[] selectedSpeakers)
+        public async Task<IActionResult> Create([Bind("Id,date,OpeningSong,SacramentSong,IntermediateSong,ClosingSong")] Sacrament sacrament, 
+            string[] selectedSpeakers,
+            string[] SpeakerTopic)
         {
+            GetMembersForDropdown();
             _context.Add(sacrament);
-            UpdateSpeakers(sacrament, selectedSpeakers);
+            UpdateSpeakers(sacrament, selectedSpeakers,SpeakerTopic);
             if (ModelState.IsValid)
             {
                 await _context.SaveChangesAsync();
@@ -82,6 +90,7 @@ namespace SacramentMeeting.Controllers
             {
                 return NotFound();
             }
+            GetMembersForDropdown();
 
             var sacrament = await _context.Sacrament
                 .Include(m=>m.Speakers)
@@ -100,18 +109,24 @@ namespace SacramentMeeting.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,date,OpeningSong,SacramentSong,IntermediateSong,ClosingSong")] Sacrament sacrament, string[] selectedSpeakers)
+        public async Task<IActionResult> Edit(
+            int id, 
+            [Bind("Id,date,OpeningSong,SacramentSong,IntermediateSong,ClosingSong")] Sacrament sacrament,
+            string[] selectedSpeakers,
+            String[] SpeakerTopic
+            )
         {
             if (id != sacrament.Id)
             {
                 return NotFound();
             }
+            GetMembersForDropdown();
 
             if (ModelState.IsValid)
             {
                 _context.Attach(sacrament);
                 ;
-                UpdateSpeakers(sacrament, selectedSpeakers);
+                UpdateSpeakers(sacrament, selectedSpeakers, SpeakerTopic);
                 try
                 {
                     _context.Update(sacrament);
@@ -133,8 +148,9 @@ namespace SacramentMeeting.Controllers
             return View(sacrament);
         }
 
-        private void UpdateSpeakers(Sacrament sacrament, String[] selectedSpeakers)
+        private void UpdateSpeakers(Sacrament sacrament, String[] selectedSpeakers, String[] SpeakerTopic)
         {
+            GetMembersForDropdown();
 
             ICollection<Member> selectedSpeakersList = new List<Member>();
             ICollection<Speakers> allSpeakers = _context.Speakers
@@ -142,24 +158,24 @@ namespace SacramentMeeting.Controllers
         
             //_context.Member.find
             if(selectedSpeakers[0] != null)
-            foreach (string speaker in selectedSpeakers)
-            {
+            for(int i = 0; i < selectedSpeakers.Length;i++)
+           {
                 var firstName = "";
                 var lastName = "";
-                    if (speaker != null) //continue;
-                if(speaker.Contains(","))
+                    if (selectedSpeakers[i] != null) //continue;
+                if(selectedSpeakers[i].Contains(","))
                 {
-                    var splitName = speaker.Split(",");
+                    var splitName = selectedSpeakers[i].Split(",");
                     firstName = splitName[1].Trim();
                     lastName = splitName[0].Trim();
                 }
                 else
                 {
-                    firstName = speaker.Trim();
+                    firstName = selectedSpeakers[i].Trim();
                     // Was going to be for first *SPACE* last,
                     // // but since you can have spaces in the FirstMiddleName, 
                     // // it wasn't going to work
-                    //var splitName = speaker.Split(" ");
+                    //var splitName = selectedSpeakers[i].Split(" ");
                     //firstName = splitName[0];
                     //if(splitName.Length > 1)
                     //    lastName = splitName[splitName.Length-1];
