@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SacramentMeeting.Models;
 
 namespace SacramentMeeting.Models
 {
@@ -17,6 +18,7 @@ namespace SacramentMeeting.Models
         public DbSet<Calling> Calling { get; set; }
         public DbSet<Member> Member{ get; set; }
         public DbSet<Speakers> Speakers { get; set; }
+        public DbSet<SacramentMeeting.Models.SpeakerTopic> SpeakerTopic { get; set; }
         
     }
 }

@@ -105,13 +105,29 @@ namespace SacramentMeeting.Migrations
 
                     b.Property<int>("SacramentID");
 
+                    b.Property<int?>("TopicID");
+
                     b.HasKey("Id");
 
                     b.HasIndex("MemberID");
 
                     b.HasIndex("SacramentID");
 
+                    b.HasIndex("TopicID");
+
                     b.ToTable("Speakers");
+                });
+
+            modelBuilder.Entity("SacramentMeeting.Models.SpeakerTopic", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Topic");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SpeakerTopic");
                 });
 
             modelBuilder.Entity("SacramentMeeting.Models.MemberCalling", b =>
@@ -148,6 +164,10 @@ namespace SacramentMeeting.Migrations
                         .WithMany("Speakers")
                         .HasForeignKey("SacramentID")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("SacramentMeeting.Models.SpeakerTopic", "Topic")
+                        .WithMany()
+                        .HasForeignKey("TopicID");
                 });
 #pragma warning restore 612, 618
         }

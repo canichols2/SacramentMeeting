@@ -1,7 +1,7 @@
 ﻿@model SacramentMeeting.Models.Sacrament
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Sacrament Create";
 }
 
 <h2>Create</h2>
@@ -11,6 +11,7 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
+            @await  Html.PartialAsync("DataList")
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="date" class="control-label"></label>

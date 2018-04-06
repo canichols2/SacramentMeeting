@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace SacramentMeeting.Migrations
 {
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -38,20 +38,16 @@ namespace SacramentMeeting.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Sacrament",
+                name: "SpeakerTopic",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ClosingSong = table.Column<int>(nullable: false),
-                    IntermediateSong = table.Column<int>(nullable: false),
-                    OpeningSong = table.Column<int>(nullable: false),
-                    SacramentSong = table.Column<int>(nullable: false),
-                    date = table.Column<DateTime>(nullable: false)
+                    Topic = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Sacrament", x => x.Id);
+                    table.PrimaryKey("PK_SpeakerTopic", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -61,7 +57,7 @@ namespace SacramentMeeting.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Active = table.Column<bool>(nullable: false),
-                    CallingId = table.Column<int>(nullable: false),
+                    CallingId = table.Column<int>(nullable: true),
                     MemberId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -72,7 +68,7 @@ namespace SacramentMeeting.Migrations
                         column: x => x.CallingId,
                         principalTable: "Calling",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_MemberCalling_Member_MemberId",
                         column: x => x.MemberId,
@@ -82,13 +78,45 @@ namespace SacramentMeeting.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Sacrament",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    ClosingSong = table.Column<int>(nullable: false),
+                    ConductingId = table.Column<int>(nullable: true),
+                    IntermediateSong = table.Column<int>(nullable: true),
+                    OpeningSong = table.Column<int>(nullable: false),
+                    PresidingId = table.Column<int>(nullable: true),
+                    SacramentSong = table.Column<int>(nullable: false),
+                    date = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sacrament", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Sacrament_Member_ConductingId",
+                        column: x => x.ConductingId,
+                        principalTable: "Member",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Sacrament_Member_PresidingId",
+                        column: x => x.PresidingId,
+                        principalTable: "Member",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Speakers",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     MemberID = table.Column<int>(nullable: false),
-                    SacramentID = table.Column<int>(nullable: false)
+                    SacramentID = table.Column<int>(nullable: false),
+                    TopicID = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -105,6 +133,12 @@ namespace SacramentMeeting.Migrations
                         principalTable: "Sacrament",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Speakers_SpeakerTopic_TopicID",
+                        column: x => x.TopicID,
+                        principalTable: "SpeakerTopic",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -118,6 +152,16 @@ namespace SacramentMeeting.Migrations
                 column: "MemberId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Sacrament_ConductingId",
+                table: "Sacrament",
+                column: "ConductingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sacrament_PresidingId",
+                table: "Sacrament",
+                column: "PresidingId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Speakers_MemberID",
                 table: "Speakers",
                 column: "MemberID");
@@ -126,6 +170,11 @@ namespace SacramentMeeting.Migrations
                 name: "IX_Speakers_SacramentID",
                 table: "Speakers",
                 column: "SacramentID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Speakers_TopicID",
+                table: "Speakers",
+                column: "TopicID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -140,10 +189,13 @@ namespace SacramentMeeting.Migrations
                 name: "Calling");
 
             migrationBuilder.DropTable(
-                name: "Member");
+                name: "Sacrament");
 
             migrationBuilder.DropTable(
-                name: "Sacrament");
+                name: "SpeakerTopic");
+
+            migrationBuilder.DropTable(
+                name: "Member");
         }
     }
 }

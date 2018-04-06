@@ -11,8 +11,8 @@ using System;
 namespace SacramentMeeting.Migrations
 {
     [DbContext(typeof(SacramentContext))]
-    [Migration("20180403202407_initial")]
-    partial class initial
+    [Migration("20180405143726_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -56,7 +56,7 @@ namespace SacramentMeeting.Migrations
 
                     b.Property<bool>("Active");
 
-                    b.Property<int>("CallingId");
+                    b.Property<int?>("CallingId");
 
                     b.Property<int>("MemberId");
 
@@ -76,15 +76,23 @@ namespace SacramentMeeting.Migrations
 
                     b.Property<int>("ClosingSong");
 
-                    b.Property<int>("IntermediateSong");
+                    b.Property<int?>("ConductingId");
+
+                    b.Property<int?>("IntermediateSong");
 
                     b.Property<int>("OpeningSong");
+
+                    b.Property<int?>("PresidingId");
 
                     b.Property<int>("SacramentSong");
 
                     b.Property<DateTime>("date");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ConductingId");
+
+                    b.HasIndex("PresidingId");
 
                     b.ToTable("Sacrament");
                 });
@@ -98,26 +106,52 @@ namespace SacramentMeeting.Migrations
 
                     b.Property<int>("SacramentID");
 
+                    b.Property<int?>("TopicID");
+
                     b.HasKey("Id");
 
                     b.HasIndex("MemberID");
 
                     b.HasIndex("SacramentID");
 
+                    b.HasIndex("TopicID");
+
                     b.ToTable("Speakers");
+                });
+
+            modelBuilder.Entity("SacramentMeeting.Models.SpeakerTopic", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Topic");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SpeakerTopic");
                 });
 
             modelBuilder.Entity("SacramentMeeting.Models.MemberCalling", b =>
                 {
                     b.HasOne("SacramentMeeting.Models.Calling", "Calling")
                         .WithMany("MemberCalling")
-                        .HasForeignKey("CallingId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("CallingId");
 
                     b.HasOne("SacramentMeeting.Models.Member", "Member")
                         .WithMany("MemberCalling")
                         .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("SacramentMeeting.Models.Sacrament", b =>
+                {
+                    b.HasOne("SacramentMeeting.Models.Member", "Conducting")
+                        .WithMany()
+                        .HasForeignKey("ConductingId");
+
+                    b.HasOne("SacramentMeeting.Models.Member", "Presiding")
+                        .WithMany()
+                        .HasForeignKey("PresidingId");
                 });
 
             modelBuilder.Entity("SacramentMeeting.Models.Speakers", b =>
@@ -131,6 +165,10 @@ namespace SacramentMeeting.Migrations
                         .WithMany("Speakers")
                         .HasForeignKey("SacramentID")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("SacramentMeeting.Models.SpeakerTopic", "Topic")
+                        .WithMany()
+                        .HasForeignKey("TopicID");
                 });
 #pragma warning restore 612, 618
         }

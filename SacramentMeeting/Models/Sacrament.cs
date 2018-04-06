@@ -45,10 +45,18 @@ namespace SacramentMeeting.Models
         public int Id { get; set; }
         public int SacramentID { get; set; }
         public int MemberID { get; set; }
+        public int? TopicID { get; set; }
         public Sacrament Sacrament { get; set; }
         public Member Member { get; set; }
+        public SpeakerTopic Topic { get; set; }
     }
 
+    public class SpeakerTopic
+    {
+        public int Id { get; set; }
+        public String Topic { get; set; }
+        ICollection<Speakers> Speakers { get; set; }
+    }
 
 
     public class Member

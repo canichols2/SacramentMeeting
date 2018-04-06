@@ -1,0 +1,25 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<datalist id="Members">
+    @foreach (var opt in ViewBag.Members)
+    {
+        <option value="@opt.Text"></option>
+
+    }
+</datalist>
+<datalist id="Callings">
+    @foreach (var opt in ViewBag.Callings)
+    {
+        <option value="@opt.Text"></option>
+
+    }
+</datalist>
+<datalist id="Topics">
+    @foreach (var opt in ViewBag.Topics)
+    {
+        <option value="@opt.Text"></option>
+
+    }
+</datalist>

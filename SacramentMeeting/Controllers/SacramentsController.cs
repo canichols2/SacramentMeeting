@@ -49,6 +49,10 @@ namespace SacramentMeeting.Controllers
         public IActionResult Create()
         {
             var sac = new Sacrament {Speakers = new List<Speakers>() ,date = DateTime.Now};
+            ViewData["Members"] = new SelectList(_context.Member, "Id", "FullName");
+            ViewData["Topics"] = new SelectList(_context.SpeakerTopic, "Id", "Topic");
+            ViewData["Callings"] = new SelectList(_context.Calling, "Id", "CallingName");
+            //ViewData["Callings"] = new SelectList(_context.MemberCalling.Where(c=>c.Active==true).Include(c=>c.Member), "Id", "Member.FullName");
             return View(sac);
         }
 
