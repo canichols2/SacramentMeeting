@@ -26,7 +26,7 @@ namespace SacramentMeeting.Controllers
                     .ThenInclude(r=>r.Member)
                 .Include(l=>l.Presiding)
                 .Include(x=>x.Conducting)
-                .OrderBy(r=>r.date)
+                .OrderByDescending(r=>r.date)
                 .Take(2));
         }
 

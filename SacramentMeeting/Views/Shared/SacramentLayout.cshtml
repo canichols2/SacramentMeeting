@@ -1,0 +1,69 @@
+﻿@model SacramentMeeting.Models.Sacrament
+@*
+    Make sure to include speakers and such before sending the model in.
+*@
+
+<div class="sacramentModel">
+
+    <h2>@Model.date.ToString("MMMM dd, yyyy")</h2>
+    <br />
+    <dl class="dl-horizontal">
+        @if (Model.Presiding != null)
+    {
+        <dt>Presiding:</dt>
+        <dd>@Model.Presiding.FullName</dd>
+        <br />
+        <dt>Conducting:</dt>
+        <dd>@Model.Conducting.FullName</dd>
+}
+        <br />
+        <dt>Opening Hymn:</dt>
+        <dd>@Model.OpeningSong</dd>
+        <br />
+        <dt>Invocation:</dt>
+        <dd>TBD</dd>
+    </dl>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>Sacrament Hymn:</dt>
+        <dd>@Model.SacramentSong</dd>
+        <br />
+        <dt>The Sacrament:</dt>
+        <dd>Priesthood Brothren</dd>
+    </dl>
+    <hr />
+    <dl class="dl-horizontal">
+        @if (Model.Speakers != null && Model.Speakers.Any())
+        {
+            @foreach (var speak in Model.Speakers.Take(Model.Speakers.Count - 1))
+            {
+                <dt>Speaker:</dt>
+                <dd> @speak.Member.FullName</dd>
+                <br />
+            }
+        }
+        @if (Model.IntermediateSong != null)
+        {
+            <dt>Intermediate Hymn:</dt>
+            <dd>@Model.IntermediateSong</dd>
+            <br />
+        }
+        @* Show last speaker after intermediate Hymn *@
+        @if (Model.Speakers != null && Model.Speakers.Any() && Model.Speakers.Count > 1)
+        {
+            @foreach (var speak in Model.Speakers.Reverse().Take(1))
+            {
+                <dt>Speaker:</dt>
+                <dd> @speak.Member.FullName</dd>
+            }
+        }
+        <br />
+        <dt>Closing Hymn:</dt>
+        <dd>@Model.ClosingSong</dd>
+        <br />
+
+        <dt>Benediction:</dt>
+        <dd>TBD</dd>
+
+    </dl>
+</div>

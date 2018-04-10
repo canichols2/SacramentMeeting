@@ -39,3 +39,22 @@ address {
         display: none;
     }
 }
+
+.sacramentModel {
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 1px 1px 5px 1px grey;
+    background: #fff4e5;
+    padding: 50px;
+    position:relative;
+    margin-top:50px;
+}
+    /*.sacramentModel > dl > dt, {
+        word-break: break-word;
+        margin-top: 5px;
+    }*/
+    .sacramentModel > h2 {
+        font-family: 'Courgette', cursive;
+        position: absolute;
+        top: 0px;
+    }

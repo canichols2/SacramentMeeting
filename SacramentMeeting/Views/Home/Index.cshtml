@@ -6,22 +6,5 @@
 <h1 style="font-family: 'Courgette', cursive;">Sacrament Meeting</h1>
 @foreach (var program in Model)
 {
-    <h2>@program.date.ToString("MMMM dd, yyyy")</h2>
-    <h2>Opening Hymn:  @program.OpeningSong</h2>
-    @if (program.Presiding != null) {
-    <h2>Presiding: @program.Presiding.FullName</h2>
-    <h2>Conducting: @program.Conducting.FullName</h2>
-    }
-
-    @if (program.Speakers != null && program.Speakers.Any())
-    {
-    @foreach (var speak in program.Speakers)
-    {
-        <h2>Speaker: @speak.Member.FullName</h2>
-    }
-    }
-
-    <h2>Sacrament Hymn: @program.SacramentSong</h2>
-    <h2>Intermediate Hymn: @program.IntermediateSong</h2>
-    <h2>Closing Hymn: @program.ClosingSong</h2>
+    @await Html.PartialAsync("SacramentLayout", program)
 }
