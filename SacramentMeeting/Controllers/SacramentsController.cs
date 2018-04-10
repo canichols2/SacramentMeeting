@@ -155,6 +155,7 @@ namespace SacramentMeeting.Controllers
             ICollection<Member> selectedSpeakersList = new List<Member>();
             ICollection<Speakers> allSpeakers = _context.Speakers
                 .Include(s=>s.Member).ToList();
+            ICollection<SpeakerTopic> allTopics = _context.SpeakerTopic.ToList();
         
             //_context.Member.find
             if(selectedSpeakers[0] != null)
@@ -172,13 +173,6 @@ namespace SacramentMeeting.Controllers
                 else
                 {
                     firstName = selectedSpeakers[i].Trim();
-                    // Was going to be for first *SPACE* last,
-                    // // but since you can have spaces in the FirstMiddleName, 
-                    // // it wasn't going to work
-                    //var splitName = selectedSpeakers[i].Split(" ");
-                    //firstName = splitName[0];
-                    //if(splitName.Length > 1)
-                    //    lastName = splitName[splitName.Length-1];
                 }
                 
 
