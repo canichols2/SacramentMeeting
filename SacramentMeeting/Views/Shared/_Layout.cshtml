@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="https://fonts.googleapis.com/css?family=Courgette" rel="stylesheet">
+   
     <title>@ViewData["Title"] - SacramentMeeting</title>
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -17,10 +18,12 @@
     </environment>
 </head>
 <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+
+    
+    <nav class="navbar navbar-inverse navbar-fixed-top" style="background-color: #A70F01">
         <div class="container">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <button type="button" class="navbar-toggle" style="background-color: #A70F01" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -28,8 +31,8 @@
                 </button>
                 <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">SacramentMeeting</a>
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
+            <div class="navbar-collapse collapse" style="background-color: #A70F01">
+                <ul class="nav navbar-nav" style="background-color: #A70F01">
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-area="" asp-controller="Sacraments" asp-action="index">Sacraments</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact Us</a></li>
@@ -48,6 +51,7 @@
             </div>
         </div>
     </nav>
+        
     <div class="container body-content">
         @RenderBody()
         <hr />
