@@ -24,6 +24,8 @@ namespace SacramentMeeting.Controllers
             return View(_context.Sacrament
                 .Include(s => s.Speakers)
                     .ThenInclude(r=>r.Member)
+                .Include(m => m.Speakers)
+                    .ThenInclude(s => s.Topic)
                 .Include(l=>l.Presiding)
                 .Include(x=>x.Conducting)
                 .OrderByDescending(r=>r.date)

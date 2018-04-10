@@ -38,7 +38,7 @@
             @foreach (var speak in Model.Speakers.Take(Model.Speakers.Count - 1))
             {
                 <dt>Speaker:</dt>
-                <dd> @speak.Member.FullName</dd>
+                <dd> @speak.Member.FullName (@speak.Topic.Topic)</dd>
                 <br />
             }
         }

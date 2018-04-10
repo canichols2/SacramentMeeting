@@ -35,6 +35,8 @@ namespace SacramentMeeting.Controllers
             var sacrament = await _context.Sacrament
                 .Include(m => m.Speakers)
                     .ThenInclude(s => s.Member)
+                .Include(m => m.Speakers)
+                    .ThenInclude(s => s.Topic)
                 .SingleOrDefaultAsync(m => m.Id == id)
                 ;
             if (sacrament == null)
@@ -93,8 +95,10 @@ namespace SacramentMeeting.Controllers
             GetMembersForDropdown();
 
             var sacrament = await _context.Sacrament
-                .Include(m=>m.Speakers)
-                    .ThenInclude(s=>s.Member)
+                .Include(m => m.Speakers)
+                    .ThenInclude(s => s.Member)
+                .Include(m => m.Speakers)
+                    .ThenInclude(s => s.Topic)
                 .SingleOrDefaultAsync(m => m.Id == id)
                 ;
             if (sacrament == null)
@@ -152,9 +156,10 @@ namespace SacramentMeeting.Controllers
         {
             GetMembersForDropdown();
 
-            ICollection<Member> selectedSpeakersList = new List<Member>();
+            ICollection<Speakers> selectedSpeakersList = new List<Speakers>();
             ICollection<Speakers> allSpeakers = _context.Speakers
                 .Include(s=>s.Member).ToList();
+            ICollection<SpeakerTopic> allTopics = _context.SpeakerTopic.ToList();
         
             //_context.Member.find
             if(selectedSpeakers[0] != null)
@@ -172,13 +177,6 @@ namespace SacramentMeeting.Controllers
                 else
                 {
                     firstName = selectedSpeakers[i].Trim();
-                    // Was going to be for first *SPACE* last,
-                    // // but since you can have spaces in the FirstMiddleName, 
-                    // // it wasn't going to work
-                    //var splitName = selectedSpeakers[i].Split(" ");
-                    //firstName = splitName[0];
-                    //if(splitName.Length > 1)
-                    //    lastName = splitName[splitName.Length-1];
                 }
                 
 
@@ -187,12 +185,25 @@ namespace SacramentMeeting.Controllers
                 {
                     continue;
                 }
-
-                if (_context.Member.Any(m => m.FirstMiddleName == firstName && m.LastName == lastName))
+                    Member mem;
+                    SpeakerTopic top;
+                    if (_context.Member.Any(m => m.FirstMiddleName == firstName && m.LastName == lastName))
                 {
-                    Member mem = _context.Member.SingleOrDefault(m => m.FirstMiddleName == firstName && m.LastName == lastName);
-
-                    selectedSpeakersList.Add(mem);
+                    mem = _context.Member.SingleOrDefault(m => m.FirstMiddleName == firstName && m.LastName == lastName);
+                    if(_context.SpeakerTopic.Any(T=>T.Topic == SpeakerTopic[i] && SpeakerTopic[i].Trim() != ""))
+                        {
+                             top = _context.SpeakerTopic.SingleOrDefault(T => T.Topic == SpeakerTopic[i].Trim());
+                            //mem.Topic = top;
+                        }
+                    else
+                        {
+                             top = new SpeakerTopic();
+                            top.Topic = SpeakerTopic[i].Trim();
+                            _context.Add(top);
+                            _context.SaveChanges();
+                            //mem.Topic = top;
+                        }
+                    selectedSpeakersList.Add(new Speakers {Sacrament = sacrament, Member = mem, Topic = top });
                 }
                 else
                 {
@@ -202,7 +213,21 @@ namespace SacramentMeeting.Controllers
                     member.LastName = lastName;
                     member.BaptizeDate = DateTime.Now;
                     _context.Add(member);
-                    selectedSpeakersList.Add(member);
+                        mem = _context.Member.SingleOrDefault(m => m.FirstMiddleName == firstName && m.LastName == lastName);
+                        if (_context.SpeakerTopic.Any(T => T.Topic == SpeakerTopic[i]) && SpeakerTopic[i].Trim() != "")
+                        {
+                            top = _context.SpeakerTopic.SingleOrDefault(T => T.Topic == SpeakerTopic[i].Trim());
+                            //mem.Topic = top;
+                        }
+                        else
+                        {
+                            top = new SpeakerTopic();
+                            top.Topic = SpeakerTopic[i].Trim();
+                            _context.Add(top);
+                            _context.SaveChanges();
+                            //mem.Topic = top;
+                        }
+                        selectedSpeakersList.Add(new Speakers {Sacrament = sacrament, Member = mem, Topic = top });
                 }
             }
             _context.SaveChanges();
@@ -210,18 +235,15 @@ namespace SacramentMeeting.Controllers
             //Remove old speaker references.
             foreach (var aSpeak in allSpeakers)
             {
-                if (!selectedSpeakersList.Contains(aSpeak.Member) && aSpeak.Sacrament == sacrament)
-                {
-                    sacrament.Speakers.Remove(aSpeak);
-                }
+                if(aSpeak != null && sacrament.Speakers != null && sacrament.Speakers.Contains(aSpeak))
+                 sacrament.Speakers.Remove(aSpeak);
             }
             if (sacrament.Speakers == null)
                 sacrament.Speakers = new List<Speakers>();
             //Add new speaker references (If Not Exist)
-            foreach (var member in selectedSpeakersList)
+            foreach (var speaker in selectedSpeakersList)
             {
-                if(!sacrament.Speakers.Any(s=>s.Member == member))
-                    sacrament.Speakers.Add(new Speakers { SacramentID = sacrament.Id, MemberID = member.Id, Member = member });
+                sacrament.Speakers.Add(speaker);
             }
             //_context.SaveChanges();
         }

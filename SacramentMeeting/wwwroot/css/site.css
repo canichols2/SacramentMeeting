@@ -58,3 +58,6 @@ address {
         position: absolute;
         top: 0px;
     }
+    .sacramentModel hr {
+        border-top: 1px solid black;
+    }
