@@ -16,20 +16,25 @@ namespace SacramentMeeting.Controllers
         {
             _context = context;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             //return View(await _context.Sacrament.Include(s=>s.Sacrament).ThenInclude(s=>s.Member).ToListAsync());
             //return View(await _context.Sacrament.ToListAsync());
             //return View(_context.Sacrament.ToList());
-            return View(_context.Sacrament
+
+
+            var sacrament = await _context.Sacrament
                 .Include(s => s.Speakers)
-                    .ThenInclude(r=>r.Member)
+                    .ThenInclude(r => r.Member)
                 .Include(m => m.Speakers)
                     .ThenInclude(s => s.Topic)
-                .Include(l=>l.Presiding)
-                .Include(x=>x.Conducting)
-                .OrderByDescending(r=>r.date)
-                .Take(2));
+                .Include(l => l.Presiding)
+                .Include(x => x.Conducting)
+                .Include(s => s.Invocation).Include(S => S.Benediction)
+                .OrderByDescending(r => r.date)
+                .Take(2).ToListAsync();
+
+            return View(sacrament);
         }
 
 

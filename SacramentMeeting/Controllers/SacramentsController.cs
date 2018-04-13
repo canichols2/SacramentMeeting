@@ -80,11 +80,11 @@ namespace SacramentMeeting.Controllers
         {
             GetMembersForDropdown();
             _context.Add(sacrament);
-            sacrament.Presiding = getMember(Presiding);
-            sacrament.Conducting = getMember(Conducting);
-            sacrament.Invocation = getMember(Invocation);
-            sacrament.Benediction = getMember(Benediction);
-            UpdateSpeakers(sacrament, selectedSpeakers, SpeakerTopic);
+            sacrament.Presiding = await getMember(Presiding);
+            sacrament.Conducting = await getMember(Conducting);
+            sacrament.Invocation = await getMember(Invocation);
+            sacrament.Benediction = await getMember(Benediction);
+            await UpdateSpeakers(sacrament, selectedSpeakers, SpeakerTopic);
             if (ModelState.IsValid)
             {
                 await _context.SaveChangesAsync();
@@ -141,15 +141,15 @@ namespace SacramentMeeting.Controllers
                 return NotFound();
             }
             GetMembersForDropdown();
-            sacrament.Presiding = getMember(Presiding);
-            sacrament.Conducting = getMember(Conducting);
-            sacrament.Invocation = getMember(Invocation);
-            sacrament.Benediction = getMember(Benediction);
+            sacrament.Presiding = await getMember(Presiding);
+            sacrament.Conducting = await getMember(Conducting);
+            sacrament.Invocation = await getMember(Invocation);
+            sacrament.Benediction = await getMember(Benediction);
             if (ModelState.IsValid)
             {
                 _context.Attach(sacrament);
                 ;
-                UpdateSpeakers(sacrament, selectedSpeakers, SpeakerTopic);
+                await UpdateSpeakers(sacrament, selectedSpeakers, SpeakerTopic);
                 try
                 {
                     _context.Update(sacrament);
@@ -171,7 +171,9 @@ namespace SacramentMeeting.Controllers
             return View(sacrament);
         }
 
-        private void UpdateSpeakers(Sacrament sacrament, String[] selectedSpeakers, String[] SpeakerTopic)
+        private async 
+        Task
+UpdateSpeakers(Sacrament sacrament, String[] selectedSpeakers, String[] SpeakerTopic)
         {
             GetMembersForDropdown();
 
@@ -184,7 +186,7 @@ namespace SacramentMeeting.Controllers
             if (selectedSpeakers[0] != null)
                 for (int i = 0; i < selectedSpeakers.Length; i++)
                 {
-                    Member mem = getMember(selectedSpeakers[i]);
+                    Member mem = await getMember(selectedSpeakers[i]);
                     SpeakerTopic top = getTopic(SpeakerTopic[i]);
                     if (mem != null)
                         selectedSpeakersList.Add(new Speakers { Sacrament = sacrament, Member = mem, Topic = top });
@@ -227,7 +229,7 @@ namespace SacramentMeeting.Controllers
             return top;
         }
 
-        private Member getMember(string v)
+        private async Task<Member> getMember(string v)
         {
             if (v == null || v == "")
                 return null;

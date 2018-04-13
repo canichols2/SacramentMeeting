@@ -8,23 +8,17 @@
     <h2>@Model.date.ToString("MMMM dd, yyyy")</h2>
     <br />
     <dl class="dl-horizontal">
-        @if (Model.Presiding != null)
-        {
             <dt>Presiding:</dt>
-            <dd>@Model.Presiding.FullName</dd>
+            <dd>@if (Model.Presiding != null){@Model.Presiding.FullName}else{ <span>What? No one?</span> }</dd>
             <br />
-        }
-        @if (Model.Conducting != null)
-        {
             <dt>Conducting:</dt>
-            <dd>@Model.Conducting.FullName</dd>
-        }
+            <dd>@if (Model.Conducting != null){@Model.Conducting.FullName}else{ <span>TBD</span> }</dd>
         <br />
         <dt>Opening Hymn:</dt>
         <dd>@Model.OpeningSong</dd>
         <br />
         <dt>Invocation:</dt>
-        <dd>TBD</dd>
+            <dd>@if (Model.Invocation != null){@Model.Invocation.FullName}else{ <span>TBD</span> }</dd>
     </dl>
     <hr />
     <dl class="dl-horizontal">
@@ -32,7 +26,7 @@
         <dd>@Model.SacramentSong</dd>
         <br />
         <dt>The Sacrament:</dt>
-        <dd>Priesthood Brothren</dd>
+        <dd>Priesthood Bretheren</dd>
     </dl>
     <hr />
     <dl class="dl-horizontal">
@@ -66,7 +60,7 @@
         <br />
 
         <dt>Benediction:</dt>
-        <dd>TBD</dd>
+            <dd>@if (Model.Benediction != null){@Model.Benediction.FullName}else{ <span>TBD</span> }</dd>
 
     </dl>
 </div>

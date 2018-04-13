@@ -24,15 +24,15 @@
             </div>
             <div class="form-group">
                 <label class="control-label">Presiding:</label>
-                <input list="Members" placeholder="Presiding" name="Presiding" class="form-control" />
+                <input list="Members" placeholder="Presiding" name="Presiding" class="form-control" value="@if (Model.Presiding != null) {@Model.Presiding.FullName}"/>
             </div>
             <div class="form-group">
                 <label class="control-label">Conducting:</label>
-                <input list="Members" placeholder="Conducting" name="Conducting" class="form-control" />
+                <input list="Members" placeholder="Conducting" name="Conducting" class="form-control"  value="@if (Model.Conducting != null) {@Model.Conducting.FullName}"/>
             </div>
             <div class="form-group">
                 <label class="control-label">Invocation:</label>
-                <input list="Members" placeholder="Invocation" name="Invocation" class="form-control" />
+                <input list="Members" placeholder="Invocation" name="Invocation" class="form-control" value="@if (Model.Invocation != null) {@Model.Invocation.FullName}" />
             </div>
             <div class="form-group">
                 <label asp-for="OpeningSong" class="control-label"></label>
@@ -51,7 +51,7 @@
             </div>
             <div class="form-group">
                 <label class="control-label">Benediction:</label>
-                <input list="Members" placeholder="Benediction" name="Benediction" class="form-control" />
+                <input list="Members" placeholder="Benediction" name="Benediction" class="form-control" value="@if (Model.Benediction != null) {@Model.Invocation.FullName}" />
             </div>
             <div class="form-group">
                 <label asp-for="ClosingSong" class="control-label"></label>
