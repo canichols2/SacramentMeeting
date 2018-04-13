@@ -4,7 +4,7 @@
 @model SacramentMeeting.Models.Sacrament
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Sacrament";
 }
 
 <h2>Edit</h2>
@@ -23,6 +23,18 @@
                 <span asp-validation-for="date" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label class="control-label">Presiding:</label>
+                <input list="Members" placeholder="Presiding" name="Presiding" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label class="control-label">Conducting:</label>
+                <input list="Members" placeholder="Conducting" name="Conducting" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label class="control-label">Invocation:</label>
+                <input list="Members" placeholder="Invocation" name="Invocation" class="form-control" />
+            </div>
+            <div class="form-group">
                 <label asp-for="OpeningSong" class="control-label"></label>
                 <input asp-for="OpeningSong" class="form-control" />
                 <span asp-validation-for="OpeningSong" class="text-danger"></span>
@@ -38,6 +50,10 @@
                 <span asp-validation-for="IntermediateSong" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label class="control-label">Benediction:</label>
+                <input list="Members" placeholder="Benediction" name="Benediction" class="form-control" />
+            </div>
+            <div class="form-group">
                 <label asp-for="ClosingSong" class="control-label"></label>
                 <input asp-for="ClosingSong" class="form-control" />
                 <span asp-validation-for="ClosingSong" class="text-danger"></span>
@@ -47,15 +63,6 @@
 
             @await Html.PartialAsync("SpeakersList", Model.Speakers)
 
-            @*<div class="form-group">*@
-            @*<label for="selectedSpeakers" class="control-label">Selected Speakers:</label>*@
-            @* This will eventually become a for-each but for now we'll leave it as is, static 5 boxes.*@
-            @*@foreach (var item in Model.Speakers)
-        {
-            <input class=" form-control" type="text" name="selectedSpeakers" value="@item.Member.FullName" /> <br />
-        }
-        <input class=" form-control" type="text" name="selectedSpeakers" value="" /> <br />
-        </div>*@
 
 
             <div class="form-group">

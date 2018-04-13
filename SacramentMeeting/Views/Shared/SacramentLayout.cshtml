@@ -9,13 +9,16 @@
     <br />
     <dl class="dl-horizontal">
         @if (Model.Presiding != null)
-    {
-        <dt>Presiding:</dt>
-        <dd>@Model.Presiding.FullName</dd>
-        <br />
-        <dt>Conducting:</dt>
-        <dd>@Model.Conducting.FullName</dd>
-}
+        {
+            <dt>Presiding:</dt>
+            <dd>@Model.Presiding.FullName</dd>
+            <br />
+        }
+        @if (Model.Conducting != null)
+        {
+            <dt>Conducting:</dt>
+            <dd>@Model.Conducting.FullName</dd>
+        }
         <br />
         <dt>Opening Hymn:</dt>
         <dd>@Model.OpeningSong</dd>
