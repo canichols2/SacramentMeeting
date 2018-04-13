@@ -21,7 +21,7 @@ namespace SacramentMeeting.Controllers
         // GET: Sacraments
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Sacrament.Include(i=>i.Speakers).ThenInclude(s=>s.Member).ToListAsync());
+            return View(await _context.Sacrament.Include(i => i.Speakers).ThenInclude(s => s.Member).Include(s=>s.Presiding).Include(S=>S.Conducting).ToListAsync());
         }
 
         // GET: Sacraments/Details/5
@@ -37,6 +37,8 @@ namespace SacramentMeeting.Controllers
                     .ThenInclude(s => s.Member)
                 .Include(m => m.Speakers)
                     .ThenInclude(s => s.Topic)
+                .Include(s => s.Presiding).Include(S => S.Conducting)
+                .Include(s => s.Invocation).Include(S => S.Benediction)
                 .SingleOrDefaultAsync(m => m.Id == id)
                 ;
             if (sacrament == null)
@@ -68,19 +70,27 @@ namespace SacramentMeeting.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,date,OpeningSong,SacramentSong,IntermediateSong,ClosingSong")] Sacrament sacrament, 
+        public async Task<IActionResult> Create([Bind("Id,date,OpeningSong,SacramentSong,IntermediateSong,ClosingSong")] Sacrament sacrament,
             string[] selectedSpeakers,
-            string[] SpeakerTopic)
+            string[] SpeakerTopic,
+            string Presiding,
+            string Conducting,
+            string Invocation,
+            string Benediction)
         {
             GetMembersForDropdown();
             _context.Add(sacrament);
-            UpdateSpeakers(sacrament, selectedSpeakers,SpeakerTopic);
+            sacrament.Presiding = getMember(Presiding);
+            sacrament.Conducting = getMember(Conducting);
+            sacrament.Invocation = getMember(Invocation);
+            sacrament.Benediction = getMember(Benediction);
+            UpdateSpeakers(sacrament, selectedSpeakers, SpeakerTopic);
             if (ModelState.IsValid)
             {
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            if(sacrament.Speakers == null)
+            if (sacrament.Speakers == null)
                 sacrament.Speakers = new List<Speakers>();
             return View(sacrament);
         }
@@ -99,6 +109,8 @@ namespace SacramentMeeting.Controllers
                     .ThenInclude(s => s.Member)
                 .Include(m => m.Speakers)
                     .ThenInclude(s => s.Topic)
+                .Include(s => s.Presiding).Include(S => S.Conducting)
+                .Include(s => s.Invocation).Include(S => S.Benediction)
                 .SingleOrDefaultAsync(m => m.Id == id)
                 ;
             if (sacrament == null)
@@ -114,10 +126,14 @@ namespace SacramentMeeting.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
-            int id, 
+            int id,
             [Bind("Id,date,OpeningSong,SacramentSong,IntermediateSong,ClosingSong")] Sacrament sacrament,
             string[] selectedSpeakers,
-            String[] SpeakerTopic
+            String[] SpeakerTopic,
+            string Presiding,
+            string Conducting,
+            string Invocation,
+            string Benediction
             )
         {
             if (id != sacrament.Id)
@@ -125,7 +141,10 @@ namespace SacramentMeeting.Controllers
                 return NotFound();
             }
             GetMembersForDropdown();
-
+            sacrament.Presiding = getMember(Presiding);
+            sacrament.Conducting = getMember(Conducting);
+            sacrament.Invocation = getMember(Invocation);
+            sacrament.Benediction = getMember(Benediction);
             if (ModelState.IsValid)
             {
                 _context.Attach(sacrament);
@@ -158,95 +177,100 @@ namespace SacramentMeeting.Controllers
 
             ICollection<Speakers> selectedSpeakersList = new List<Speakers>();
             ICollection<Speakers> allSpeakers = _context.Speakers
-                .Include(s=>s.Member).ToList();
+                .Include(s => s.Member).ToList();
             ICollection<SpeakerTopic> allTopics = _context.SpeakerTopic.ToList();
-        
+
             //_context.Member.find
-            if(selectedSpeakers[0] != null)
-            for(int i = 0; i < selectedSpeakers.Length;i++)
-           {
-                var firstName = "";
-                var lastName = "";
-                    if (selectedSpeakers[i] != null) //continue;
-                if(selectedSpeakers[i].Contains(","))
+            if (selectedSpeakers[0] != null)
+                for (int i = 0; i < selectedSpeakers.Length; i++)
                 {
-                    var splitName = selectedSpeakers[i].Split(",");
+                    Member mem = getMember(selectedSpeakers[i]);
+                    SpeakerTopic top = getTopic(SpeakerTopic[i]);
+                    if (mem != null)
+                        selectedSpeakersList.Add(new Speakers { Sacrament = sacrament, Member = mem, Topic = top });
+
+                    //Remove old speaker references.
+                    foreach (var aSpeak in allSpeakers)
+                    {
+                        if (aSpeak != null && sacrament.Speakers != null && sacrament.Speakers.Contains(aSpeak))
+                            sacrament.Speakers.Remove(aSpeak);
+                    }
+                    if (sacrament.Speakers == null)
+                        sacrament.Speakers = new List<Speakers>();
+                    //Add new speaker references (If Not Exist)
+                    foreach (var speaker in selectedSpeakersList)
+                    {
+                        sacrament.Speakers.Add(speaker);
+                    }
+                    //_context.SaveChanges();
+                }
+        }
+
+        private SpeakerTopic getTopic(string v)
+        {
+            if (v == null || v == "")
+                return null;
+            SpeakerTopic top;
+            if (_context.SpeakerTopic.Any(T => T.Topic == v && v.Trim() != ""))
+            {
+                top = _context.SpeakerTopic.SingleOrDefault(T => T.Topic == v.Trim());
+                //mem.Topic = top;
+            }
+            else
+            {
+                top = new SpeakerTopic();
+                top.Topic = v.Trim();
+                _context.Add(top);
+                _context.SaveChanges();
+                //mem.Topic = top;
+            }
+            return top;
+        }
+
+        private Member getMember(string v)
+        {
+            if (v == null || v == "")
+                return null;
+            Member mem;
+            var firstName = "";
+            var lastName = "";
+            if (v != null) //continue;
+                if (v.Contains(","))
+                {
+                    var splitName = v.Split(",");
                     firstName = splitName[1].Trim();
                     lastName = splitName[0].Trim();
                 }
                 else
                 {
-                    firstName = selectedSpeakers[i].Trim();
+                    firstName = v.Trim();
                 }
-                
 
 
-                if(firstName == "")
-                {
-                    continue;
-                }
-                    Member mem;
-                    SpeakerTopic top;
-                    if (_context.Member.Any(m => m.FirstMiddleName == firstName && m.LastName == lastName))
-                {
-                    mem = _context.Member.SingleOrDefault(m => m.FirstMiddleName == firstName && m.LastName == lastName);
-                    if(_context.SpeakerTopic.Any(T=>T.Topic == SpeakerTopic[i] && SpeakerTopic[i].Trim() != ""))
-                        {
-                             top = _context.SpeakerTopic.SingleOrDefault(T => T.Topic == SpeakerTopic[i].Trim());
-                            //mem.Topic = top;
-                        }
-                    else
-                        {
-                             top = new SpeakerTopic();
-                            top.Topic = SpeakerTopic[i].Trim();
-                            _context.Add(top);
-                            _context.SaveChanges();
-                            //mem.Topic = top;
-                        }
-                    selectedSpeakersList.Add(new Speakers {Sacrament = sacrament, Member = mem, Topic = top });
-                }
-                else
-                {
-                    //Create Entity and add it to speakerList....
-                    var member = new Member();
-                    member.FirstMiddleName = firstName;
-                    member.LastName = lastName;
-                    member.BaptizeDate = DateTime.Now;
-                    _context.Add(member);
-                        mem = _context.Member.SingleOrDefault(m => m.FirstMiddleName == firstName && m.LastName == lastName);
-                        if (_context.SpeakerTopic.Any(T => T.Topic == SpeakerTopic[i]) && SpeakerTopic[i].Trim() != "")
-                        {
-                            top = _context.SpeakerTopic.SingleOrDefault(T => T.Topic == SpeakerTopic[i].Trim());
-                            //mem.Topic = top;
-                        }
-                        else
-                        {
-                            top = new SpeakerTopic();
-                            top.Topic = SpeakerTopic[i].Trim();
-                            _context.Add(top);
-                            _context.SaveChanges();
-                            //mem.Topic = top;
-                        }
-                        selectedSpeakersList.Add(new Speakers {Sacrament = sacrament, Member = mem, Topic = top });
-                }
+
+            if (firstName == "")
+            {
+                return null;
+            }
+            if (_context.Member.Any(m => m.FirstMiddleName == firstName && m.LastName == lastName))
+            {
+                mem = _context.Member.SingleOrDefault(m => m.FirstMiddleName == firstName && m.LastName == lastName);
+            }
+            else
+            {
+                //Create Entity and add it to speakerList....
+                var member = new Member();
+                member.FirstMiddleName = firstName;
+                member.LastName = lastName;
+                member.BaptizeDate = DateTime.Now;
+                _context.Add(member);
+                mem = _context.Member.SingleOrDefault(m => m.FirstMiddleName == firstName && m.LastName == lastName);
+
             }
             _context.SaveChanges();
-
-            //Remove old speaker references.
-            foreach (var aSpeak in allSpeakers)
-            {
-                if(aSpeak != null && sacrament.Speakers != null && sacrament.Speakers.Contains(aSpeak))
-                 sacrament.Speakers.Remove(aSpeak);
-            }
-            if (sacrament.Speakers == null)
-                sacrament.Speakers = new List<Speakers>();
-            //Add new speaker references (If Not Exist)
-            foreach (var speaker in selectedSpeakersList)
-            {
-                sacrament.Speakers.Add(speaker);
-            }
-            //_context.SaveChanges();
+            return mem;
         }
+
 
         // GET: Sacraments/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -257,7 +281,14 @@ namespace SacramentMeeting.Controllers
             }
 
             var sacrament = await _context.Sacrament
-                .SingleOrDefaultAsync(m => m.Id == id);
+                .Include(m => m.Speakers)
+                    .ThenInclude(s => s.Member)
+                .Include(m => m.Speakers)
+                    .ThenInclude(s => s.Topic)
+                .Include(s => s.Presiding).Include(S => S.Conducting)
+                .Include(s => s.Invocation).Include(S => S.Benediction)
+                .SingleOrDefaultAsync(m => m.Id == id)
+                ;
             if (sacrament == null)
             {
                 return NotFound();
