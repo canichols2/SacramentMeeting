@@ -12,7 +12,8 @@ namespace SacramentMeeting.Models
 
         public int? PresidingId { get; set; }
         public int? ConductingId { get; set; }
-
+        public int? BenedictionId { get; set; }
+        public int? InvocationId { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
@@ -37,11 +38,19 @@ namespace SacramentMeeting.Models
         [Display(Name ="Closing Song")]
         public int ClosingSong { get; set; }
 
-        [Display(Name ="Presiding")]
+        [Display(Name = "Presiding")]
         public Member Presiding { get; set; }
 
         [Display(Name = "Conducting")]
         public Member Conducting { get; set; }
+
+        [Display(Name = "Benediction")]
+        public Member Benediction { get; set; }
+
+        [Display(Name = "Invocation")]
+        public Member Invocation { get; set; }
+
+
         public virtual ICollection<Speakers> Speakers { get; set; }
     }
 

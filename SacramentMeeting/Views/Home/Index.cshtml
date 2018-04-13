@@ -3,85 +3,8 @@
     ViewData["Title"] = "Home Page";
 }
 <link href="https://fonts.googleapis.com/css?family=Courgette" rel="stylesheet">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-    #program {
-        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-        border-collapse: collapse;
-        width: 75%;
-    }
-
-        #program td, #program th {
-            padding: 2px;
-        }
-
-        #program th {
-            padding-top: 12px;
-            padding-bottom: 12px;
-            text-align: left;
-            color: white;
-        }
-
-    table {
-        background-color: #FFDEDB;
-        border-radius: 10px;
-    }
-    .responsive {
-        width: 100%;
-        height: auto;
-    }
-    </style>
-<h1 style="font-family: 'Courgette', cursive;">Sacrament Meetings</h1>
-    <img src="~/images/temple1n.jpeg" alt="templee" class="responsive">
+<h1 style="font-family: 'Courgette', cursive;">Sacrament Meeting</h1>
 @foreach (var program in Model)
 {
-
-
-    <table id="program">
-        <h4>@program.date.ToString("MMMM dd, yyyy")</h4>
-        <tr>
-            <td>Opening Hymn</td>
-            <td>@program.OpeningSong</td>
-        </tr>
-
-
-        @if (program.Presiding != null)
-        {
-            <tr>
-                <td>Presiding</td>
-                <td>@program.Presiding.FullName</td>
-            </tr>
-
-            <tr>
-                <td>Conducting</td>
-                <td>@program.Conducting.FullName</td>
-            </tr>
-        }
-
-        @if (program.Speakers != null && program.Speakers.Any())
-        {
-            @foreach (var speak in program.Speakers)
-            {
-                <tr>
-                    <td>Speaker</td>
-                    <td>@speak.Member.FullName</td>
-                </tr>
-            }
-        }
-
-        <tr>
-            <td>Sacrament Hymn</td>
-            <td>@program.SacramentSong</td>
-        </tr>
-        <tr>
-            <td>Intermediate Hymn</td>
-            <td>@program.IntermediateSong</td>
-        </tr>
-        <tr>
-            <td>Closing Hymn</td>
-            <td>@program.ClosingSong</td>
-        </tr>
-
-    </table>
+    @await Html.PartialAsync("SacramentLayout", program)
 }
-

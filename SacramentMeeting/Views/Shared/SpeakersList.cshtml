@@ -46,17 +46,18 @@
                 <span class="input-group-btn">
                     <button type="button" class="closeBtn btn btn-danger" onclick="removeSpeakerControl(this)">x</button>
                 </span>
-                <input class="form-control" type="text" name="selectedSpeakers" value="@item.Member.FullName" />
+                <input class="form-control" placeholder="Speaker" list="Members" name="selectedSpeakers" value="@item.Member.FullName" />
+                <input class="form-control" placeholder="Topic" list="Topics" name="SpeakerTopic" value="@item.Topic.Topic" />
             </div>
         }
     }
 
-    <div class="input-group">
-        <span class="input-group-btn">
-            <button type="button" class="closeBtn btn btn-danger" onclick="removeSpeakerControl(this)">x</button>
-        </span>
-        <input class="form-control" placeholder="Speaker" list="Members" name="selectedSpeakers" value="" />
-        <input class="form-control" placeholder="Topic" list="Topics" name="SpeakerTopic" value="" />
-    </div>
+            <div class="input-group">
+                <span class="input-group-btn">
+                    <button type="button" class="closeBtn btn btn-danger" onclick="removeSpeakerControl(this)">x</button>
+                </span>
+                <input class="form-control" placeholder="Speaker" list="Members" name="selectedSpeakers" value="" />
+                <input class="form-control" placeholder="Topic" list="Topics" name="SpeakerTopic" value="" />
+            </div>
 </div>
 <br /><br />

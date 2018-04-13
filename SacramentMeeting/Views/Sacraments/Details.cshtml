@@ -7,46 +7,10 @@
 <h2>Details</h2>
 
 <div>
-    <h4>Sacrament</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.date)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.date)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.OpeningSong)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.OpeningSong)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.SacramentSong)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.SacramentSong)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.IntermediateSong)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.IntermediateSong)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.ClosingSong)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ClosingSong)
-        </dd>
-        @foreach(var speaker in Model.Speakers)
-        {
-        <dt>Speaker</dt>
-        <dd>@speaker.Member.FullName</dd>
-        }
-    </dl>
+    @await Html.PartialAsync("SacramentLayout", Model)
 </div>
+<br />
+<br />
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
